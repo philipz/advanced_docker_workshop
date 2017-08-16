@@ -1,0 +1,1 @@
+docker-machine create -d azure --azure-subscription-id="XXXXXX" --azure-location="southeastasia" --azure-image canonical:ubuntuserver:16.04.0-LTS:latest --azure-size Standard_D1_v2 --engine-install-url https://get.docker.com $1
