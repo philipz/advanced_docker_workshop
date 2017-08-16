@@ -36,7 +36,7 @@ services:
   webproxy:
     depends_on:
       - wordpress
-    build: webproxy
+    image: philipz/reproxy
     networks:
       - proxy
     ports:
