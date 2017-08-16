@@ -1,0 +1,53 @@
+version: '3'
+ 
+services:
+  db:
+    image: mysql:5.7
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    networks:
+      - mysql
+      - proxy
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_PASSWORD: wordpress
+
+  webproxy:
+    depends_on:
+      - wordpress
+    build: webproxy
+    networks:
+      - proxy
+    ports:
+      - "80:80"
+ 
+volumes:
+ db_data:
+ wordpress_data:
+ 
+networks:
+  mysql:
+    external: true
+  proxy:
+    external: true
