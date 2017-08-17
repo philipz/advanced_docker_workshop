@@ -20,13 +20,13 @@ build:
 test:
   stage: test
   script:
-    - apk -U add py-pip && pip install docker-compose      
+    - apk -U add bash py-pip && pip install docker-compose      
     - docker-compose -v
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker pull registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
     - docker-compose up -d
     - docker-compose ps
-    - test.sh
+    - bash && ./test.sh
 deploy:
   stage: deploy
   script:
