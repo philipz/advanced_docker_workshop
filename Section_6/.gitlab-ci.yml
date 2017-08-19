@@ -15,16 +15,16 @@ before_script:
 build:
   stage: build      
   script:
-    - docker build . -t registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker build . -t registry.gitlab.com/$GITLAB_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker push registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker push registry.gitlab.com/$GITLAB_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
 test:
   stage: test
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker pull registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker pull registry.gitlab.com/$GITLAB_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
     - docker network create wrktest
-    - docker run -d -p 80:80 --name app --network wrktest registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker run -d -p 80:80 --name app --network wrktest registry.gitlab.com/$GITLAB_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
     - sleep 5
     - docker run --name wrk --network wrktest --rm williamyeh/wrk -t2 -c5 -d5s --timeout 2s http://app/ > test/result.txt
     - apk add --update bash bc
@@ -33,9 +33,9 @@ deploy:
   stage: deploy
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker pull registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker pull registry.gitlab.com/$GITLAB_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
     - docker login -u $DOCKER_USER -p $DOCKER_PASS
-    - docker tag registry.gitlab.com/$DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG $DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+    - docker tag registry.gitlab.com/$GITLAB_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG $DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
     - docker push $DOCKER_USER/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
 release:
   stage: release
